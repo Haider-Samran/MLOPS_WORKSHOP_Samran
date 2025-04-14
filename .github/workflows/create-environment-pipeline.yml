@@ -61,7 +61,7 @@ jobs:
     - name: Create Compute Instance
       run: |
         az ml compute create \
-        --name dev-instance \
+        --name dev-instance-test01 \
         --type computeinstance \
         --size Standard_DS3_v2 \
         --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }} \
