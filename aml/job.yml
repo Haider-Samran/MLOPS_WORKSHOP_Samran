@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+command: >-
+  python training/train.py --epochs 10 --lr 0.001
+code: .
+environment:
+  conda_file: training/conda_dependencies.yml
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+compute: azureml:cpu-cluster
+experiment_name: conda-training
+description: Training using Conda environment
