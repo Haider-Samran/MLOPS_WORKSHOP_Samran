@@ -46,14 +46,23 @@ jobs:
           --resource-group ${{ vars.RESOURCE_GROUP }} \
           --location ${{ vars.RG_LOCATION }}
 
-    # Step 7: Create compute cluster (if it doesn't exist)
-    - name: Create Compute Cluster
+    # # Step 7: Create compute cluster (if it doesn't exist)
+    # - name: Create Compute Cluster
+    #   run: |
+    #         az ml compute create \
+    #             --name cpu-cluster \
+    #             --size Standard_DS11_v2 \
+    #             --min-instances 0 \
+    #             --max-instances 2 \
+    #             --type amlcompute \
+    #             --workspace-name ${{ vars.AZURE_WORKSPACE_NAME}} \
+    #             --resource-group ${{ vars.RESOURCE_GROUP }}
+
+    - name: Create Compute Instance
       run: |
-            az ml compute create \
-                --name cpu-cluster \
-                --size Standard_DS11_v2 \
-                --min-instances 0 \
-                --max-instances 2 \
-                --type amlcompute \
-                --workspace-name ${{ vars.AZURE_WORKSPACE_NAME}} \
-                --resource-group ${{ vars.RESOURCE_GROUP }}
+        az ml compute create \
+        --name dev-instance \
+        --type computeinstance \
+        --size Standard_DS3_v2 \
+        --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }} \
+        --resource-group ${{ vars.RESOURCE_GROUP }}
