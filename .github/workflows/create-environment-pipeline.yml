@@ -58,15 +58,27 @@ jobs:
     #             --workspace-name ${{ vars.AZURE_WORKSPACE_NAME}} \
     #             --resource-group ${{ vars.RESOURCE_GROUP }}
 
-    - name: Create Compute Instance
+    - name: Create or Start Compute Instance
       run: |
-        az ml compute create \
-        --name dev-instance-test01 \
-        --type computeinstance \
-        --size Standard_DS3_v2 \
-        --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }} \
-        --resource-group ${{ vars.RESOURCE_GROUP }}
-
+        # Check if compute exists
+        if az ml compute show \
+          --name dev-instance-test01 \
+          --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }} \
+          --resource-group ${{ vars.RESOURCE_GROUP }} > /dev/null 2>&1; then
+            echo "Compute instance exists. Starting it..."
+            az ml compute start \
+              --name dev-instance-test01 \
+              --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }} \
+              --resource-group ${{ vars.RESOURCE_GROUP }}
+        else
+            echo "Compute instance not found. Creating it..."
+            az ml compute create \
+              --name dev-instance-test01 \
+              --type computeinstance \
+              --size Standard_DS2_v2 \
+              --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }} \
+              --resource-group ${{ vars.RESOURCE_GROUP }}
+        fi
 
     - name: Submit training job
       run: |
