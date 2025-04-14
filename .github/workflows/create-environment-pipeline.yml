@@ -1,0 +1,47 @@
+name: Azure ML CI - Docker Image Training
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  provision-and-train:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Install Azure CLI and Azure ML extension
+    - name: Install Azure CLI and ML extension
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        az extension add -n ml -y
+
+    # Step 3: Login to Azure
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIAL_RBAC }}
+
+    # Step 4: Set subscription
+    - name: Set Azure Subscription
+      run: |
+        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    # Step 5: Create resource group
+    - name: Create Resource Group
+      run: |
+        az group create \
+          --name ${{ vars.RESOURCE_GROUP }} \
+          --location ${{ vars.RG_LOCATION }}
+
+    # Step 6: Create Azure ML workspace
+    - name: Create Azure ML Workspace
+      run: |
+        az ml workspace create \
+          --name ${{ vars.AZURE_WORKSPACE_NAME }} \
+          --resource-group ${{ vars.RESOURCE_GROUP }} \
+          --location ${{ vars.RG_LOCATION }}
